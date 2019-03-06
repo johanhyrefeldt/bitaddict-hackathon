@@ -25,43 +25,41 @@ def dag_api():
 
     url_day = ('http://api.dryg.net/dagar/v2.1/'+year+'/'+month+'/'+day)
 
-    print('date url:',url_day)
     
     resp = requests.get(url_day)
     #print(resp.json())
     response_json = resp.json()['dagar'][0]['namnsdag']
-    print(response_json)
     
     return response_json
 
 def hitta_api(plats='goteborg'):
-    namsdag = dag_api()[0]
+    namnsdag = dag_api()[0]
 
     # Get url from first argument
     url = '/publicsearch/v1/persons?what={}&where={}&range.from=1&range.to=50'.format(namnsdag,plats)
 
     # Authentication parameters
     caller_id = "Lag1"
-    time = str(int(time.time()))
+    time2 = str(int(time.time()))
     key =  "cq9MxlplYqbiAtiPZctvhNqlWaHRsaEUgSZj57uk"
-    random = "".join(random.choice(string.ascii_letters + string.digits + string.punctuation) for i in range(16))
+    random2 = "".join(random.choice(string.ascii_letters + string.digits + string.punctuation) for i in range(16))
 
     # Create the hashed string
-    string_to_hash = caller_id + time + key + random
+    string_to_hash = caller_id + time2 + key + random2
     hashed_string = hashlib.sha1(string_to_hash.encode('utf-8')).hexdigest()
 
     # The http headers
     headers = {
        "X-Hitta-CallerId": caller_id,
-       "X-Hitta-Time": time,
-       "X-Hitta-Random": random,
+       "X-Hitta-Time": time2,
+       "X-Hitta-Random": random2,
        "X-Hitta-Hash": hashed_string
     }
 
     # Make the call
     conn = http.client.HTTPSConnection("api.hitta.se")
     conn.request("GET", url, "", headers)
-    resp = conn.getresponse()
+    resp = conn.getresponse().decode('utf-8')
 
     # Print response
     #print("resp.status\n{}\nresp.reason{}".format(resp.status, resp.reason))
@@ -72,7 +70,7 @@ def hitta_api(plats='goteborg'):
     for el in json_response['result']['persons']['person']:
         name = str(el['displayName'])
         first_name = name.split(" ")[0]
-        if first_name.lower() == 'nils':
+        if first_name.lower() == namnsdag:
             message = "Här är dagens namnsdagsbarn :) \n"
             try:
                 phone = el['phone'][0]
@@ -138,7 +136,9 @@ class Bot(BaseBot):
            "raw_data": <unmodified data itself webhook received>
         }
         """
+        self.send_message("frågar.")
         msg = hitta_api(event["content"])
+        self.send_message("på gång...")
         self.send_message(msg)
 
     
