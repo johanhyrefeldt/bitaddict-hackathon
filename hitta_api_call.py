@@ -62,10 +62,11 @@ for el in json_response['result']['persons']['person']:
     name = str(el['displayName'])
     first_name = name.split(" ")[0]
     if first_name.lower() == 'nils':
+        message = "Här är dagens namnsdagsbarn :) \n"
         try:
             phone = el['phone'][0]
             phone_number = phone['callTo']
-            print("Name: {}\t\t phone number {}".format(el['displayName'], phone_number))
+            message = message + "Namn: {} telefonnummer {}\n".format(el['displayName'], phone_number)
         except KeyError:
-            print("Name: {}\t\t Sorry! No phone number".format(el['displayName']))
-        # print(json.dumps(el, indent=2, separators=(',', ': ')))
+            message = message + "Namn: {} Ledsen! Inget telefonnummer\n".format(el['displayName'])
+
