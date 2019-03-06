@@ -59,19 +59,20 @@ def hitta_api(plats='goteborg'):
     # Make the call
     conn = http.client.HTTPSConnection("api.hitta.se")
     conn.request("GET", url, "", headers)
-    resp = conn.getresponse().decode('utf-8')
+    resp = conn.getresponse()
 
     # Print response
     #print("resp.status\n{}\nresp.reason{}".format(resp.status, resp.reason))
-    json_response = json.loads(resp.read())
+    json_response = json.loads(resp.read().decode('utf-8'))
+    
     #print(json.dumps(json_response, indent=4, separators=(',', ': ')))
 
     #%%
+    message = "Här är dagens namnsdagsbarn :) \n"
     for el in json_response['result']['persons']['person']:
         name = str(el['displayName'])
         first_name = name.split(" ")[0]
-        if first_name.lower() == namnsdag:
-            message = "Här är dagens namnsdagsbarn :) \n"
+        if first_name.lower() == namnsdag.lower():
             try:
                 phone = el['phone'][0]
                 phone_number = phone['callTo']
@@ -136,9 +137,7 @@ class Bot(BaseBot):
            "raw_data": <unmodified data itself webhook received>
         }
         """
-        self.send_message("frågar.")
         msg = hitta_api(event["content"])
-        self.send_message("på gång...")
         self.send_message(msg)
 
     
