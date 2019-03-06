@@ -1,4 +1,4 @@
-
+#%%
 #!/usr/bin/env python
 import sys
 import time
@@ -11,7 +11,7 @@ from datetime import datetime
 import requests
 
 # Get url from first argument
-url = '/publicsearch/v1/persons?what=Nils&range.from=1&range.to=5'
+url = '/publicsearch/v1/persons?what=Nils&range.from=1&range.to=50'
 
 # Authentication parameters
 caller_id = "Lag1"
@@ -57,11 +57,15 @@ def dag_api():
     response_json = resp.json()['dagar'][0]['namnsdag']
     print(response_json)
 
+#%%
 for el in json_response['result']['persons']['person']:
-    try:
-        phone = el['phone'][0]
-        phone_number = phone['callTo']
-        print("Name: {}\t\t phone number {}".format(el['displayName'], phone_number))
-    except KeyError:
-        print("Name: {}\t\t Sorry! No phone number".format(el['displayName']))
-    # print(json.dumps(el, indent=2, separators=(',', ': ')))
+    name = str(el['displayName'])
+    first_name = name.split(" ")[0]
+    if first_name.lower() == 'nils':
+        try:
+            phone = el['phone'][0]
+            phone_number = phone['callTo']
+            print("Name: {}\t\t phone number {}".format(el['displayName'], phone_number))
+        except KeyError:
+            print("Name: {}\t\t Sorry! No phone number".format(el['displayName']))
+        # print(json.dumps(el, indent=2, separators=(',', ': ')))
