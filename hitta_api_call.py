@@ -37,3 +37,19 @@ resp = conn.getresponse()
 print("{}, {}".format(resp.status, resp.reason))
 json_response = json.loads(resp.read())
 print(json.dumps(json_response, indent=4, separators=(',', ': ')))
+
+
+def dag_api():
+    datet = datetime.now() 
+    day = str(datet.day)
+    month = str(datet.month)
+    year = str(datet.year)
+
+    url_day = ('http://api.dryg.net/dagar/v2.1/'+year+'/'+month+'/'+day)
+
+    print('date url:',url_day)
+    
+    resp = requests.get(url_day)
+    #print(resp.json())
+    response_json = resp.json()['dagar'][0]['namnsdag']
+    print(response_json)
