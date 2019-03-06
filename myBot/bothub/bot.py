@@ -5,6 +5,10 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 from bothub_client.bot import BaseBot
 from bothub_client.decorators import channel
 
+def get_namedate():
+    str = "Idag har %s namnsdag! \n Gratta hen med nummer: %s" % ("Anders", "073 917 48 46")
+    return str
+
 class Bot(BaseBot):
     """Represent a Bot logic which interacts with a user.
 
@@ -55,4 +59,6 @@ class Bot(BaseBot):
            "raw_data": <unmodified data itself webhook received>
         }
         """
-        self.send_message('Echo: {}'.format(event['content']))
+        self.send_message(get_namedate())
+
+    
