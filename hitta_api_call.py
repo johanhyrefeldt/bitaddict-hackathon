@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 import sys
 import time
@@ -6,9 +7,11 @@ import string
 import hashlib
 import http.client
 import json
+from datetime import datetime
+import requests
 
 # Get url from first argument
-url = '/publicsearch/v1/address/celsiusgatan10stockholm'
+url = '/publicsearch/v1/persons?what=Nils&range.from=1&range.to=5'
 
 # Authentication parameters
 caller_id = "Lag1"
@@ -34,10 +37,10 @@ conn.request("GET", url, "", headers)
 resp = conn.getresponse()
 
 # Print response
-print("{}, {}".format(resp.status, resp.reason))
+print("resp.status\n{}\nresp.reason{}".format(resp.status, resp.reason))
 json_response = json.loads(resp.read())
 print(json.dumps(json_response, indent=4, separators=(',', ': ')))
-
+print("#########")
 
 def dag_api():
     datet = datetime.now() 
@@ -53,3 +56,12 @@ def dag_api():
     #print(resp.json())
     response_json = resp.json()['dagar'][0]['namnsdag']
     print(response_json)
+
+for el in json_response['result']['persons']['person']:
+    try:
+        phone = el['phone'][0]
+        phone_number = phone['callTo']
+        print("Name: {}\t\t phone number {}".format(el['displayName'], phone_number))
+    except KeyError:
+        print("Name: {}\t\t Sorry! No phone number".format(el['displayName']))
+    # print(json.dumps(el, indent=2, separators=(',', ': ')))
