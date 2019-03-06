@@ -1,0 +1,97 @@
+<!-- Denna fil frågar efter ett filnamn och startar ett program skrivet i Javascript -->
+<!-- Skriven av Jan Skansholm 2017 -->
+<!DOCTYPE html>
+<html>
+  <meta charset="UTF-8">
+  <body>
+    <script>
+      "use strict";
+      let _div = document.createElement("div");
+      _div.style.display = "flex";
+      _div.style.alignContent = "center";
+      _div.style.alignItems = "center";
+      _div.style.backgroundColor = "Lavender";
+      _div.style.position = "absolute";
+      _div.style.width = "540px";
+      _div.style.height = "200px";
+      _div.style.left = "200px";
+      _div.style.top = "200px";
+	  
+      let _mes = document.createElement("h4");
+      _div.appendChild(_mes);
+      _mes.style.marginLeft = "10px";
+      _mes.style.marginRight = "10px";
+      _mes.style.color = "midnightblue";
+	  
+      let _inp = document.createElement("input");
+      _div.appendChild(_inp);
+      _inp.size = 22;
+      _inp.onkeydown = _keyDown;
+	  
+      let _but = document.createElement("button");
+      _div.appendChild(_but);
+      _but.style.marginLeft = "10px";
+      _but.innerHTML = "Kör";
+      _but.onclick = _input;
+	  
+      _init("Vilket program vill du köra?");
+	  
+      function _init(txt) {
+        document.body.appendChild(_div);
+        document.title = "Start";
+        _mes.innerHTML = txt;
+        _inp.focus();
+        try {
+          if (sessionStorage.progname) {           // omstart?
+            _inp.value = sessionStorage.progname;  // lägg in programnamnet (fungerar i Chrome)
+          }
+        }
+        catch (e) {}
+      }
+	  
+      function _keyDown() {
+        if (event.key == "Enter")
+        _input();
+      }
+     
+      function _input() {
+        let txt = _inp.value;
+        txt = txt.trim();
+        if (txt.length == 0) {
+          _inp.value = "";
+          return;
+        }
+        document.title = txt;
+        if (txt.lastIndexOf(".js") < 0 && txt.lastIndexOf(".JS") < 0)
+          txt += ".js";
+        let prg = document.createElement("script");
+        prg.src = txt;
+        prg.onerror = _err;
+        document.body.removeChild(_div);
+        document.body.appendChild(prg);
+        try {sessionStorage.progname = _inp.value;}   // spara programnamnet för ev. omstart
+        catch (e) {}
+      }
+   
+      function _err() {
+        try {sessionStorage.removeItem("progname");}  // spara inte felaktigt namn
+        catch (e) {}
+        _mes.style.color = "red";
+        _init("Okänt filnamn. Försök igen!");
+      }
+	  
+      // Hjälpfunktioner
+      function toStringArray(str) {
+        return str.split(/\s+/);
+      }
+
+      function toNumberArray(str) {
+        return toStringArray(str).map(Number);
+      }
+	  
+      function cmpNum(a, b) {
+        return a - b;
+      }
+    </script>
+  </body>
+</html>
